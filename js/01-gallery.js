@@ -1,8 +1,9 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 
-console.log(galleryItems);
 const gallery = document.querySelector(".gallery");
+gallery.addEventListener("click", openModalGallery);
+gallery.addEventListener("keydown", closeModalGallery);
 
 const murkup = galleryItems
   .map(
@@ -21,19 +22,27 @@ const murkup = galleryItems
 
 gallery.insertAdjacentHTML("beforeend", murkup);
 
-/////////
-const instance = basicLightbox.create(
-  `
-	<h1>Not closable</h1>
-	<p>It's not possible to close this lightbox with a click.</p>
-`,
-  {
-    closable: true,
-  }
-);
+let instance = null;
 
-instance.show(() => console.log("lightbox now visible"));
-// instance.close(() => console.log("lightbox not visible anymore"));
-// const visible = instance.visible();
-// const instance = basicLightbox.create(document.querySelector(".gallery"));
-console.log(instance);
+function openModalGallery(evt) {
+  evt.preventDefault();
+  const galleryImg = evt.target.nodeName;
+  const originalImage = evt.target.dataset.source;
+
+  if (galleryImg !== "IMG") {
+    return;
+  }
+
+  instance = basicLightbox.create(`
+        <img src="${originalImage}" width="800" height="600">
+    `);
+
+  instance.show();
+}
+
+function closeModalGallery(evt) {
+  //   console.log(evt.key);
+  if (evt.key === "Escape") {
+    instance.close(() => console.log("lightbox not visible anymore"));
+  }
+}
